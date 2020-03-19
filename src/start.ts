@@ -37,10 +37,7 @@ export default async function main(options: Options): Promise<void> {
       if (req.path.indexOf('.') > -1) return next()
 
       const indexHTMLPath = path.resolve(options.dir, './public/index.html')
-      console.log(
-        'read html file from: ',
-        path.resolve(options.dir, './public/index.html')
-      )
+
       let indexHTML = `<!DOCTYPE html>
     <html>
     <head>
@@ -66,9 +63,24 @@ export default async function main(options: Options): Promise<void> {
       `)
       window.eval(`
         const script = document.createElement('script')
-        script.src = 'https://cdn.jsdelivr.net/npm/systemjs@6.2.6/dist/system.js'
+        script.src = '/systemjs/dist/system.js'
         document.body.appendChild(script)
       `)
+      window.eval(`
+        const script = document.createElement('script')
+        script.src = '/systemjs/dist/extras/amd.js'
+        document.body.appendChild(script)
+      `)
+      window.eval(`
+        const script = document.createElement('script')
+        script.src = '/systemjs/dist/extras/use-default.js'
+        document.body.appendChild(script)
+      `)
+      window.eval(`
+      const script = document.createElement('script')
+      script.src = '/systemjs/dist/extras/named-exports.js'
+      document.body.appendChild(script)
+    `)
       window.eval(`
         const script = document.createElement('script')
         script.type = 'systemjs-module'
@@ -83,6 +95,10 @@ export default async function main(options: Options): Promise<void> {
       res.json(options.importmap)
     })
 
+    app.use(
+      '/systemjs',
+      express.static(path.resolve(options.dir, './node_modules/systemjs'))
+    )
     app.use(express.static(path.resolve(process.cwd(), './.cache')))
     app.use(express.static(path.resolve(process.cwd(), './public')))
 

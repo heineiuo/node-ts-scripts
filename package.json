@@ -88,6 +88,7 @@
     "rollup-plugin-vue": "^5.1.6",
     "saxt": "^0.0.7",
     "shelljs": "^0.8.3",
+    "systemjs": "^6.2.6",
     "typescript": "^3.7.3",
     "yargs": "^15.0.2"
   },
