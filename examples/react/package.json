@@ -1,0 +1,10 @@
+{
+  "platform": "browser",
+  "importmap": {
+    "imports": {
+      "main": "/index.js",
+      "react": "https://cdn.jsdelivr.net/npm/react/umd/react.development.js",
+      "react-dom": "https://cdn.jsdelivr.net/npm/react-dom/umd/react-dom.development.js"
+    }
+  }
+}
