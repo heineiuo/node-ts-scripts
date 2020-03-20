@@ -1,6 +1,7 @@
 import * as rollup from 'rollup'
 import { promises as fs } from 'fs'
 import express from 'express'
+import cp from 'child_process'
 import Options from './Options'
 import path from 'path'
 import InputOptions from './InputOptions'
@@ -10,18 +11,21 @@ import { JSDOM } from 'jsdom'
 
 export default async function main(options: Options): Promise<void> {
   const { input, external, plugins } = new InputOptions(options)
+  const { dir, format } = new OutputOptions(options)
   const watcher = rollup.watch([
     {
       input,
       external,
       plugins,
-      output: new OutputOptions(options),
+      output: { dir, format },
       watch: new WatchOptions(options),
     },
   ])
 
   if (options.pkg.platform === 'browser') {
+    let code: string | null = null
     watcher.on('event', event => {
+      code = event.code
       process.stdout.cursorTo(0)
       if (event.code === 'ERROR') {
         console.log(event.error)
@@ -88,6 +92,14 @@ export default async function main(options: Options): Promise<void> {
         document.body.appendChild(script)
       `)
 
+      // if (code !== 'END') {
+      //   window.eval(`
+      //   const script = document.createElement('script')
+      //   script.innerHTML = 'setInterval(location.reload, 1000)'
+      //   document.body.appendChild(script)
+      // `)
+      // }
+
       res.send(dom.serialize())
     })
 
@@ -102,15 +114,21 @@ export default async function main(options: Options): Promise<void> {
     app.use(express.static(path.resolve(process.cwd(), './.cache')))
     app.use(express.static(path.resolve(process.cwd(), './public')))
 
-    app.listen(3000, () => {
-      console.log('node-ts-script listening on http://localhost:3000')
+    const port = options.env.PORT || 3000
+    app.listen(port, () => {
+      console.log(`node-ts-script listening on http://localhost:${port}`)
     })
   } else {
+    let child: cp.ChildProcess | null = null
     watcher.on('event', event => {
       process.stdout.cursorTo(0)
+      child?.kill()
       if (event.code === 'ERROR') {
         console.log(event.error)
       } else if (event.code === 'END') {
+        child = cp.fork(path.resolve(options.dir, './.cache/index.js'), [], {
+          cwd: options.dir,
+        })
         process.stdout.write('Compiled success')
       } else {
         process.stdout.write('Compiling...')

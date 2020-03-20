@@ -9,6 +9,8 @@ import babel from 'rollup-plugin-babel'
 import css from '@modular-css/rollup'
 import minify from 'rollup-plugin-babel-minify'
 import BabelOptions from './BabelOptions'
+// import ts from '@wessberg/rollup-plugin-ts'
+// import dts from 'rollup-plugin-dts'
 // import generatePackageJson from 'rollup-plugin-generate-package-json'
 
 export default class InputOptions {
@@ -32,6 +34,7 @@ export default class InputOptions {
 
   get plugins(): any[] {
     const result: any[] = []
+    const babelOptions = new BabelOptions(this.options)
     result.push(css({ styleExport: true }))
     result.push(image())
     result.push(
@@ -59,15 +62,16 @@ export default class InputOptions {
         namedExports: {},
       })
     )
-    result.push(babel(new BabelOptions(this.options)))
+    result.push(babel(babelOptions))
 
-    if (this.options.env.NODE_ENV === 'production')
+    if (this.options.env.NODE_ENV === 'production') {
       result.push(
         minify({
           comments: false,
           sourceMap: false,
         })
       )
+    }
 
     return result
   }
