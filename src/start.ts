@@ -8,6 +8,7 @@ import InputOptions from './InputOptions'
 import OutputOptions from './OutputOptions'
 import WatchOptions from './WatchOptions'
 import { JSDOM } from 'jsdom'
+import cors from 'cors'
 
 export default async function main(options: Options): Promise<void> {
   const { input, external, plugins } = new InputOptions(options)
@@ -102,6 +103,8 @@ export default async function main(options: Options): Promise<void> {
 
       res.send(dom.serialize())
     })
+
+    app.use(cors())
 
     app.use('/importmap.json', (req, res) => {
       res.json(options.importmap)

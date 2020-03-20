@@ -1,6 +1,6 @@
 {
   "name": "node-ts-scripts",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Develop browser app and node app in one cli",
   "files": [
     "build",
@@ -62,6 +62,7 @@
     "@wessberg/rollup-plugin-ts": "^1.2.21",
     "babel-eslint": "^10.0.3",
     "builtin-modules": "^3.1.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.7.0",
