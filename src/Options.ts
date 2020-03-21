@@ -6,22 +6,21 @@ import dotenv from 'dotenv'
 
 export default class Options {
   static async loadEnv(dir: string, command: string): Promise<any> {
-    let envfile = `.env`
-    if (process.env.NODE_ENV === 'production') {
-      envfile += `.production`
-    } else {
-      envfile += `.development`
+    if (!process.env.NODE_ENV) {
+      if (command === 'build' || command === 'bundle') {
+        process.env.NODE_ENV = 'production'
+      } else {
+        process.env.NODE_ENV = 'development'
+      }
     }
 
-    const defaultEnv = {
-      NODE_ENV: command === 'start' ? 'development' : 'production',
-    }
+    const envfile = `.env.${process.env.NODE_ENV}`
 
     try {
       const env = dotenv.parse(await fs.readFile(path.resolve(dir, envfile)))
-      return { ...defaultEnv, ...process.env, ...env }
+      return { ...process.env, ...env }
     } catch (e) {
-      return { ...defaultEnv, ...process.env }
+      return { ...process.env }
     }
   }
 

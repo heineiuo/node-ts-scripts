@@ -4,3 +4,4 @@ dist
 .cache
 examples/*/build
 examples/*/.cache
+.env.*
