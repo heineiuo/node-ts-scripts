@@ -130,6 +130,7 @@ export default async function main(options: Options): Promise<void> {
         console.log(event.error)
       } else if (event.code === 'END') {
         child = cp.fork(path.resolve(options.dir, './.cache/index.js'), [], {
+          env: options.env,
           cwd: options.dir,
         })
         process.stdout.write('Compiled success')

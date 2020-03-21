@@ -1,9 +1,9 @@
 {
   "name": "node-ts-scripts",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "Develop browser app and node app in one cli",
   "files": [
-    "build",
+    "build/**/*.js",
     "bin"
   ],
   "bin": "bin/node-ts-scripts",
@@ -41,6 +41,11 @@
     "@types/express": "^4.17.2",
     "@types/glob": "^7.1.1",
     "@types/jsdom": "^16.1.0",
+    "@types/koa": "^2.11.2",
+    "@types/koa-cors": "0.0.0",
+    "@types/koa-graphql": "^0.8.3",
+    "@types/koa-mount": "^4.0.0",
+    "@types/node-fetch": "^2.5.5",
     "@typescript-eslint/eslint-plugin": "^2.11.0",
     "@typescript-eslint/parser": "^2.11.0",
     "@wessberg/rollup-plugin-ts": "^1.2.21",
