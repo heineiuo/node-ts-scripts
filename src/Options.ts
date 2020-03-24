@@ -73,7 +73,7 @@ export default class Options {
   }
 
   get extensions(): string[] {
-    return ['.ts', '.tsx', '.js', '.jsx']
+    return ['.ts', '.tsx', '.js', '.jsx', '.mjs']
   }
 
   get replaceMap(): any {
