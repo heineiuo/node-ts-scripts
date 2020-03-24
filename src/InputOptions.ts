@@ -7,7 +7,7 @@ import replace from '@rollup/plugin-replace'
 import image from '@rollup/plugin-image'
 import babel from 'rollup-plugin-babel'
 import css from '@modular-css/rollup'
-import minify from 'rollup-plugin-babel-minify'
+import { terser } from 'rollup-plugin-terser'
 import BabelOptions from './BabelOptions'
 // import ts from '@wessberg/rollup-plugin-ts'
 // import dts from 'rollup-plugin-dts'
@@ -65,12 +65,7 @@ export default class InputOptions {
     result.push(babel(babelOptions))
 
     if (this.options.env.NODE_ENV === 'production') {
-      result.push(
-        minify({
-          comments: false,
-          sourceMap: false,
-        })
-      )
+      result.push(terser())
     }
 
     return result
