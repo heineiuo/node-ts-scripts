@@ -1,0 +1,33 @@
+name: Release CI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Build
+      run: |
+        npm i node-ts-scripts@latest --no-save
+        node node_modules/.bin/node-ts-scripts bundle
+        npm run build
+      env:
+        CI: true
+    - name: npm login & publish
+      run: |
+        echo '//registry.npmjs.org/:_authToken=${{secrets.NPM_TOKEN}}' > ~/.npmrc
+        npm publish
+        
