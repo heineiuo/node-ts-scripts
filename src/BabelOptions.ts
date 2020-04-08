@@ -14,6 +14,9 @@ export default class BabelOptions {
           useBuiltIns: false,
           targets: {
             node: 'current',
+            browsers: options.pkg.browserslist
+              ? options.pkg.browserslist[options.env.NODE_ENV]
+              : undefined,
           },
         },
       ],
