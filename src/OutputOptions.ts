@@ -1,5 +1,6 @@
 import Options from './Options'
 import path from 'path'
+import { ModuleFormat } from 'rollup'
 
 export default class OutputOptions {
   constructor(options: Options) {
@@ -12,7 +13,11 @@ export default class OutputOptions {
     return path.resolve(this.options.dir, `./${folder}`)
   }
   // file: "build/index.js",
-  get format(): 'cjs' | 'system' {
+  get format(): ModuleFormat {
     return this.options.format
+  }
+
+  get name(): string {
+    return this.options.pkg.name
   }
 }

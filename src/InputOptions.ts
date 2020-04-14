@@ -1,3 +1,4 @@
+import { Plugin } from 'rollup'
 import Options from './Options'
 import builtins from 'builtin-modules'
 import commonjs from '@rollup/plugin-commonjs'
@@ -6,12 +7,9 @@ import resolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
 import image from '@rollup/plugin-image'
 import babel from 'rollup-plugin-babel'
-import css from '@modular-css/rollup'
 import { terser } from 'rollup-plugin-terser'
 import BabelOptions from './BabelOptions'
-// import ts from '@wessberg/rollup-plugin-ts'
-// import dts from 'rollup-plugin-dts'
-// import generatePackageJson from 'rollup-plugin-generate-package-json'
+import postcss from 'rollup-plugin-postcss'
 
 export default class InputOptions {
   constructor(options: Options) {
@@ -32,10 +30,16 @@ export default class InputOptions {
     })
   }
 
-  get plugins(): any[] {
-    const result: any[] = []
+  get plugins(): Plugin[] {
+    const result: Plugin[] = []
     const babelOptions = new BabelOptions(this.options)
-    result.push(css({ styleExport: true }))
+    result.push(
+      postcss({
+        extract: false,
+        modules: this.options.env.USE_CSS_MODULES === 'true',
+        use: [],
+      })
+    )
     result.push(image())
     result.push(
       json({
@@ -46,12 +50,15 @@ export default class InputOptions {
         namedExports: true,
       })
     )
-    if (this.options.pkg.platform === 'browser')
+    if (this.options.pkg.platform === 'browser') {
       result.push(replace(this.options.replaceMap))
+    }
     result.push(
       resolve({
+        mainFields: ['main', 'browser'],
+        browser: this.options.pkg.platform === 'browser',
         extensions: this.options.extensions,
-        preferBuiltins: true,
+        preferBuiltins: this.options.pkg.platform !== 'browser',
       })
     )
     result.push(

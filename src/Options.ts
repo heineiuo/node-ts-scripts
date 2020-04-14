@@ -3,6 +3,7 @@ import findUp from 'find-up'
 import path from 'path'
 import { promises as fs } from 'fs'
 import dotenv from 'dotenv'
+import { ModuleFormat } from 'rollup'
 
 export default class Options {
   static async loadEnv(dir: string, command: string): Promise<any> {
@@ -55,9 +56,10 @@ export default class Options {
     [x: string]: any
   }
 
-  get format(): 'cjs' | 'system' {
+  get format(): ModuleFormat {
     if (this.pkg.platform === 'node') return 'cjs'
-    return 'system'
+    if (this.pkg.platform === 'browser') return 'systemjs'
+    return 'umd'
   }
 
   get importmap(): any {

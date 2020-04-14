@@ -25,12 +25,12 @@ export default async function main(options: Options): Promise<void> {
 
   if (options.pkg.platform === 'browser') {
     let code: string | null = null
-    watcher.on('event', event => {
+    watcher.on('event', (event: rollup.RollupWatcherEvent) => {
       code = event.code
       process.stdout.cursorTo(0)
-      if (event.code === 'ERROR') {
+      if (code === 'ERROR') {
         console.log(event.error)
-      } else if (event.code === 'END') {
+      } else if (code === 'END') {
         process.stdout.write('Compiled success')
       } else {
         process.stdout.write('Compiling...')
