@@ -1,5 +1,4 @@
 import * as rollup from 'rollup'
-import { promises as fs } from 'fs'
 import express from 'express'
 import cp from 'child_process'
 import Options from './Options'
@@ -7,8 +6,8 @@ import path from 'path'
 import InputOptions from './InputOptions'
 import OutputOptions from './OutputOptions'
 import WatchOptions from './WatchOptions'
-import { JSDOM } from 'jsdom'
 import cors from 'cors'
+import { HTMLGenerator } from './HTMLGenerator'
 
 export default async function main(options: Options): Promise<void> {
   const { input, external, plugins } = new InputOptions(options)
@@ -22,6 +21,9 @@ export default async function main(options: Options): Promise<void> {
       watch: new WatchOptions(options),
     },
   ])
+  const htmlGenerator = new HTMLGenerator(options)
+
+  await htmlGenerator.load()
 
   if (options.pkg.platform === 'browser') {
     let code: string | null = null
@@ -40,68 +42,7 @@ export default async function main(options: Options): Promise<void> {
     const app = express()
     app.use(async (req, res, next) => {
       if (req.path.indexOf('.') > -1) return next()
-
-      const indexHTMLPath = path.resolve(options.dir, './public/index.html')
-
-      let indexHTML = `<!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <title>node ts scripts</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-     </head>
-    <body>
-      <div id="app"></div>
-    </body>
-    </html>`
-      try {
-        indexHTML = await fs.readFile(indexHTMLPath, 'utf8')
-      } catch (e) {}
-      const dom = new JSDOM(indexHTML, { runScripts: 'outside-only' })
-      const { window } = dom
-      window.eval(`
-        const script = document.createElement('script')
-        script.type = 'systemjs-importmap'
-        script.src = '/importmap.json'
-        document.body.appendChild(script)
-      `)
-      window.eval(`
-        const script = document.createElement('script')
-        script.src = '/systemjs/dist/system.js'
-        document.body.appendChild(script)
-      `)
-      window.eval(`
-        const script = document.createElement('script')
-        script.src = '/systemjs/dist/extras/amd.js'
-        document.body.appendChild(script)
-      `)
-      window.eval(`
-        const script = document.createElement('script')
-        script.src = '/systemjs/dist/extras/use-default.js'
-        document.body.appendChild(script)
-      `)
-      window.eval(`
-      const script = document.createElement('script')
-      script.src = '/systemjs/dist/extras/named-exports.js'
-      document.body.appendChild(script)
-    `)
-      window.eval(`
-        const script = document.createElement('script')
-        script.type = 'systemjs-module'
-        script.src = '/index.js'
-        document.body.appendChild(script)
-      `)
-
-      // if (code !== 'END') {
-      //   window.eval(`
-      //   const script = document.createElement('script')
-      //   script.innerHTML = 'setInterval(location.reload, 1000)'
-      //   document.body.appendChild(script)
-      // `)
-      // }
-
-      res.send(dom.serialize())
+      res.send(htmlGenerator.toString())
     })
 
     app.use(cors())

@@ -1,6 +1,7 @@
 import start from './start'
 import build from './build'
 import bundle from './bundle'
+import buildHtml from './buildHtml'
 import Options from './Options'
 
 async function main(): Promise<void> {
@@ -18,6 +19,11 @@ async function main(): Promise<void> {
 
   if (options.command === 'bundle') {
     bundle(options)
+    return
+  }
+
+  if (options.command === 'build-html') {
+    buildHtml(options)
     return
   }
 }
