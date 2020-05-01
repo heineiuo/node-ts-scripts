@@ -5,6 +5,7 @@ import path from 'path'
 
 export default async function buildHtml(options: Options): Promise<void> {
   const htmlGenerator = new HTMLGenerator(options)
+  await htmlGenerator.load()
   await fs.mkdir(path.resolve(options.dir, './build'), { recursive: true })
   await fs.writeFile(
     path.resolve(options.dir, './build/index.html'),
