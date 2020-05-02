@@ -2,6 +2,7 @@ import { promises as fs } from 'fs'
 import path from 'path'
 import Options from './Options'
 import { JSDOM } from 'jsdom'
+import { minify } from 'html-minifier'
 
 export class HTMLGenerator {
   constructor(options: Options) {
@@ -76,28 +77,37 @@ export class HTMLGenerator {
       //   document.body.appendChild(script)
       // `)
       // }
-    } else {
-      window.eval(`
+
+      return dom.serialize()
+    }
+
+    window.eval(`
       const script = document.createElement('script')
       script.type = 'systemjs-importmap'
       script.src = 'https://cdn.jsdelivr.net/npm/${this.options.pkg.name}@${this.options.pkg.version}/build/importmap.json'
       document.body.appendChild(script)
     `)
-      if (Array.isArray(this.options.pkg.htmlScripts)) {
-        window.eval(`
+    if (Array.isArray(this.options.pkg.htmlScripts)) {
+      window.eval(`
       const script = document.createElement('script')
       script.src = '${this.options.pkg.htmlScripts.join(',')}'
       document.body.appendChild(script)
     `)
-      }
-      window.eval(`
+    }
+    window.eval(`
       const script = document.createElement('script')
       script.type = 'systemjs-module'
       script.src = 'https://cdn.jsdelivr.net/npm/${this.options.pkg.name}@${this.options.pkg.version}/build/index.js'
       document.body.appendChild(script)
     `)
-    }
 
-    return dom.serialize()
+    const htmlString = dom.serialize()
+    return minify(
+      htmlString,
+      this.options.pkg.htmlMinifier || {
+        removeComments: true,
+        collapseWhitespace: true,
+      }
+    )
   }
 }

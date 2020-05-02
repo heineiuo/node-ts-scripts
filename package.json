@@ -1,6 +1,6 @@
 {
   "name": "node-ts-scripts",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Develop browser app and node app in one cli",
   "files": [
     "build/**/*.js",
@@ -62,6 +62,7 @@
     "eslint-plugin-react-hooks": "^2.5.1",
     "express": "^4.17.1",
     "find-up": "^4.1.0",
+    "html-minifier": "^4.0.0",
     "jest": "^24.9.0",
     "jsdom": "^16.2.1",
     "rollup": "^2.1.0",
