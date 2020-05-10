@@ -8,7 +8,11 @@ import { ModuleFormat } from 'rollup'
 export default class Options {
   static async loadEnv(dir: string, command: string): Promise<any> {
     if (!process.env.NODE_ENV) {
-      if (command === 'build' || command === 'bundle' || 'build-html') {
+      if (
+        command === 'build' ||
+        command === 'bundle' ||
+        command === 'build-html'
+      ) {
         process.env.NODE_ENV = 'production'
       } else {
         process.env.NODE_ENV = 'development'
