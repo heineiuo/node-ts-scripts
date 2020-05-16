@@ -1,5 +1,5 @@
 import { argv } from 'yargs'
-import findUp from 'find-up'
+// import findUp from 'find-up'
 import path from 'path'
 import { promises as fs } from 'fs'
 import dotenv from 'dotenv'
@@ -31,26 +31,29 @@ export default class Options {
 
   static async from(): Promise<Options> {
     if (argv._.length === 0) {
-      throw new Error('node-ts-scripts command: start, build')
+      throw new Error('node-ts-scripts command: run, bundle')
+    }
+
+    if (argv._.length === 1) {
+      throw new Error('node-ts-scripts: need an entry file')
     }
     const command = argv._[0]
+    const entryFile = argv._[1]
 
-    const nodeModule = await findUp('node_modules', { type: 'directory' })
-    if (!nodeModule) throw new Error('node_modules not found')
-    const dir = path.dirname(nodeModule)
+    const dir = process.cwd()
     const pkg = JSON.parse(
       await fs.readFile(path.resolve(dir, './package.json'), 'utf8')
     )
-    const opt = { command, dir, pkg, env: await this.loadEnv(dir, command) }
+    const opt = {
+      command,
+      argv,
+      entryFile,
+      dir,
+      pkg,
+      env: await this.loadEnv(dir, command),
+    }
 
     return new Options(opt)
-  }
-
-  constructor(opt: any) {
-    this.dir = opt.dir
-    this.pkg = opt.pkg
-    this.env = opt.env
-    this.command = opt.command
   }
 
   command: string
@@ -59,10 +62,24 @@ export default class Options {
   env: {
     [x: string]: any
   }
+  argv: {
+    [x: string]: any
+  }
+  entryFile: string
+
+  constructor(opt: any) {
+    this.argv = opt.argv
+    this.dir = opt.dir
+    this.pkg = opt.pkg
+    this.env = opt.env
+    this.command = opt.command
+    this.entryFile = opt.entryFile
+  }
 
   get format(): ModuleFormat {
-    if (this.pkg.platform === 'node') return 'cjs'
-    if (this.pkg.platform === 'browser') return 'systemjs'
+    if (this.argv.format) return this.argv.format
+    if (this.platform === 'node') return 'cjs'
+    if (this.platform === 'browser') return 'systemjs'
     return 'umd'
   }
 
@@ -89,5 +106,9 @@ export default class Options {
       result[`process.env.${key}`] = JSON.stringify(this.env[key])
     }
     return result
+  }
+
+  get platform(): string {
+    return this.argv.platform || this.pkg.platform || 'node'
   }
 }

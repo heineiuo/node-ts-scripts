@@ -50,15 +50,15 @@ export default class InputOptions {
         namedExports: true,
       })
     )
-    if (this.options.pkg.platform === 'browser') {
+    if (this.options.platform === 'browser') {
       result.push(replace(this.options.replaceMap))
     }
     result.push(
       resolve({
         mainFields: ['main', 'browser'],
-        browser: this.options.pkg.platform === 'browser',
+        browser: this.options.platform === 'browser',
         extensions: this.options.extensions,
-        preferBuiltins: this.options.pkg.platform !== 'browser',
+        preferBuiltins: this.options.platform !== 'browser',
       })
     )
     result.push(
@@ -79,14 +79,14 @@ export default class InputOptions {
   }
 
   get input(): string {
-    return 'src/index'
+    return this.options.entryFile
   }
 
   get external(): string[] {
     let result = this.filterbuiltins()
-    if (this.options.pkg.platform === 'node') {
+    if (this.options.platform === 'node') {
       result = result.concat(Object.keys(this.options.pkg.dependencies || {}))
-    } else if (this.options.pkg.platform === 'browser') {
+    } else if (this.options.platform === 'browser') {
       result = result.concat(Object.keys(this.options.importmap.imports))
     }
     return result
