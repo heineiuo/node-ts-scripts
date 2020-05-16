@@ -1,6 +1,6 @@
 {
   "name": "node-ts-scripts",
-  "version": "0.10.0-alpha.1",
+  "version": "0.10.0-alpha.2",
   "description": "Develop browser app and node app in one cli",
   "files": [
     "build/**/*.js",
