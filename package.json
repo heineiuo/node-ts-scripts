@@ -8,7 +8,7 @@
   ],
   "bin": "bin/node-ts-scripts",
   "scripts": {
-    "build": "node build bundle",
+    "build": "node build bundle src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
