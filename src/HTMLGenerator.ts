@@ -13,91 +13,60 @@ export class HTMLGenerator {
   options: Options
   indexHTMLPath: string
 
-  indexHTML = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>node ts scripts</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
- </head>
-<body>
-  <div id="app"></div>
-</body>
-</html>`
-
-  load = async (): Promise<void> => {
+  async renderToString(): Promise<string> {
+    let indexHTML = `<!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title>node ts scripts</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+     </head>
+    <body>
+      <div id="app"></div>
+    </body>
+    </html>`
     try {
-      this.indexHTML = await fs.readFile(this.indexHTMLPath, 'utf8')
+      indexHTML = await fs.readFile(this.indexHTMLPath, 'utf8')
     } catch (e) {}
-  }
 
-  toString(): string {
-    const dom = new JSDOM(this.indexHTML, { runScripts: 'outside-only' })
-    const { window } = dom
+    const dom = new JSDOM(indexHTML, { runScripts: 'outside-only' })
 
-    if (this.options.env.NODE_ENV === 'development') {
-      window.eval(`
+    const importMapSrc =
+      this.options.env.NODE_ENV === 'development'
+        ? '/importmap.json'
+        : 'https://cdn.jsdelivr.net/npm/${this.options.pkg.name}@${this.options.pkg.version}/build/importmap.json'
+
+    dom.window.eval(`
       const script = document.createElement('script')
       script.type = 'systemjs-importmap'
-      script.src = '/importmap.json'
-      document.body.appendChild(script)
-    `)
-      window.eval(`
-      const script = document.createElement('script')
-      script.src = '/systemjs/dist/system.js'
-      document.body.appendChild(script)
-    `)
-      window.eval(`
-      const script = document.createElement('script')
-      script.src = '/systemjs/dist/extras/amd.js'
-      document.body.appendChild(script)
-    `)
-      window.eval(`
-      const script = document.createElement('script')
-      script.src = '/systemjs/dist/extras/use-default.js'
-      document.body.appendChild(script)
-    `)
-      window.eval(`
-    const script = document.createElement('script')
-    script.src = '/systemjs/dist/extras/named-exports.js'
-    document.body.appendChild(script)
-  `)
-      window.eval(`
-      const script = document.createElement('script')
-      script.type = 'systemjs-module'
-      script.src = '/index.js'
+      script.src = '${importMapSrc}'
       document.body.appendChild(script)
     `)
 
-      // if (code !== 'END') {
-      //   window.eval(`
-      //   const script = document.createElement('script')
-      //   script.innerHTML = 'setInterval(location.reload, 1000)'
-      //   document.body.appendChild(script)
-      // `)
-      // }
+    const htmlScripts = Array.isArray(this.options.pkg.htmlScripts)
+      ? this.options.pkg.htmlScripts
+      : [
+          'https://cdn.jsdelivr.net/combine/npm/promise-polyfill@8.1.3/dist/polyfill.min.js,npm/regenerator-runtime@0.13.5/runtime.min.js,npm/systemjs@6.2.6/dist/system.min.js,npm/systemjs@6.2.6/dist/extras/amd.min.js,npm/systemjs@6.2.6/dist/extras/use-default.min.js,npm/systemjs@6.2.6/dist/extras/named-exports.min.js',
+        ]
 
-      return dom.serialize()
-    }
-
-    window.eval(`
+    for (const htmlScript of htmlScripts) {
+      dom.window.eval(`
       const script = document.createElement('script')
-      script.type = 'systemjs-importmap'
-      script.src = 'https://cdn.jsdelivr.net/npm/${this.options.pkg.name}@${this.options.pkg.version}/build/importmap.json'
-      document.body.appendChild(script)
-    `)
-    if (Array.isArray(this.options.pkg.htmlScripts)) {
-      window.eval(`
-      const script = document.createElement('script')
-      script.src = '${this.options.pkg.htmlScripts.join(',')}'
+      script.src = '${htmlScript}'
       document.body.appendChild(script)
     `)
     }
+
+    const entryModule =
+      this.options.env.NODE_ENV === 'development'
+        ? '/index.js'
+        : 'https://cdn.jsdelivr.net/npm/${this.options.pkg.name}@${this.options.pkg.version}/build/index.js'
+
     window.eval(`
       const script = document.createElement('script')
       script.type = 'systemjs-module'
-      script.src = 'https://cdn.jsdelivr.net/npm/${this.options.pkg.name}@${this.options.pkg.version}/build/index.js'
+      script.src = '${entryModule}'
       document.body.appendChild(script)
     `)
 

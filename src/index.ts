@@ -64,11 +64,10 @@ async function buildDir(options: Options): Promise<void> {
 }
 async function buildHtml(options: Options): Promise<void> {
   const htmlGenerator = new HTMLGenerator(options)
-  await htmlGenerator.load()
   await fs.mkdir(path.resolve(options.dir, './build'), { recursive: true })
   await fs.writeFile(
     path.resolve(options.dir, './build/index.html'),
-    htmlGenerator.toString(),
+    await htmlGenerator.renderToString(),
     'utf8'
   )
   await fs.writeFile(
@@ -106,8 +105,7 @@ async function run(options: Options): Promise<void> {
   ])
   const htmlGenerator = new HTMLGenerator(options)
 
-  await htmlGenerator.load()
-
+  console.log(`${options.platform}`)
   if (options.platform === 'browser') {
     let code: string | null = null
     watcher.on('event', (event: any) => {
@@ -125,7 +123,7 @@ async function run(options: Options): Promise<void> {
     const app = express()
     app.use(async (req, res, next) => {
       if (req.path.indexOf('.') > -1) return next()
-      res.send(htmlGenerator.toString())
+      res.send(await htmlGenerator.renderToString())
     })
 
     app.use(cors())
@@ -168,6 +166,7 @@ async function run(options: Options): Promise<void> {
 async function main(): Promise<void> {
   const options = await Options.from()
 
+  console.log(`command ...${options.command}`)
   if (options.command === 'run') {
     run(options)
     return
