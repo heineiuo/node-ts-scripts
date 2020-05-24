@@ -99,7 +99,7 @@ export default class Options {
         }
       }
     }
-    return imports
+    return { ...(this.pkg.importmap || {}), imports }
   }
 
   get extensions(): string[] {
