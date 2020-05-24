@@ -18,6 +18,6 @@ export default class OutputOptions {
   }
 
   get name(): string {
-    return `${this.options.pkg.name}.${this.options.env.NODE_ENV}`
+    return `${this.options.pkg.name}`
   }
 }
