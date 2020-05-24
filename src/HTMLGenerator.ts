@@ -63,7 +63,7 @@ export class HTMLGenerator {
         ? '/index.js'
         : 'https://cdn.jsdelivr.net/npm/${this.options.pkg.name}@${this.options.pkg.version}/build/index.js'
 
-    window.eval(`
+    dom.window.eval(`
       const script = document.createElement('script')
       script.type = 'systemjs-module'
       script.src = '${entryModule}'

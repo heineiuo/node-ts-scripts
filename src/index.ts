@@ -105,7 +105,7 @@ async function run(options: Options): Promise<void> {
   ])
   const htmlGenerator = new HTMLGenerator(options)
 
-  console.log(`${options.platform}`)
+  console.log(`Platform: ${options.platform}`)
   if (options.platform === 'browser') {
     let code: string | null = null
     watcher.on('event', (event: any) => {
@@ -166,7 +166,6 @@ async function run(options: Options): Promise<void> {
 async function main(): Promise<void> {
   const options = await Options.from()
 
-  console.log(`command ...${options.command}`)
   if (options.command === 'run') {
     run(options)
     return
