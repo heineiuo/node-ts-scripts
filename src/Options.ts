@@ -84,15 +84,22 @@ export default class Options {
   }
 
   get importmap(): any {
+    let rawImports = {}
+    const imports = {}
     try {
-      return {
-        imports: this.pkg.importmap.imports,
-      }
-    } catch (e) {
-      return {
-        imports: {},
+      rawImports = this.pkg.importmap.imports
+    } catch (e) {}
+    for (const [key, value] of Object.entries(rawImports)) {
+      if (typeof value === 'string') {
+        imports[key] = value
+      } else {
+        const environmentValue = value[this.env.NODE_ENV]
+        if (typeof environmentValue === 'string') {
+          imports[key] = environmentValue
+        }
       }
     }
+    return imports
   }
 
   get extensions(): string[] {
