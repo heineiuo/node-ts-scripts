@@ -34,7 +34,7 @@ export class HTMLGenerator {
 
     const importMapSrc =
       this.options.env.NODE_ENV === 'development'
-        ? '/importmap.json'
+        ? `http://localhost:${this.options.env.PORT}/importmap.json`
         : 'https://cdn.jsdelivr.net/npm/${this.options.pkg.name}@${this.options.pkg.version}/build/importmap.json'
 
     dom.window.eval(`
@@ -58,15 +58,9 @@ export class HTMLGenerator {
     `)
     }
 
-    const entryModule =
-      this.options.env.NODE_ENV === 'development'
-        ? '/index.js'
-        : 'https://cdn.jsdelivr.net/npm/${this.options.pkg.name}@${this.options.pkg.version}/build/index.js'
-
     dom.window.eval(`
       const script = document.createElement('script')
-      script.type = 'systemjs-module'
-      script.src = '${entryModule}'
+      script.innerHTML = 'System.import("${this.options.pkg.name}")'
       document.body.appendChild(script)
     `)
 

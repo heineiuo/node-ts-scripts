@@ -72,7 +72,7 @@ async function buildHtml(options: Options): Promise<void> {
   )
   await fs.writeFile(
     path.resolve(options.dir, './build/importmap.json'),
-    JSON.stringify(options.pkg.importmap),
+    JSON.stringify(options.importmap),
     'utf8'
   )
   console.log('Build html files success')

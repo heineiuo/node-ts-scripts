@@ -20,12 +20,14 @@ export default class Options {
     }
 
     const envfile = `.env.${process.env.NODE_ENV}`
-
+    const defaultEnv = {
+      PORT: 3000,
+    }
     try {
       const env = dotenv.parse(await fs.readFile(path.resolve(dir, envfile)))
-      return { ...process.env, ...env }
+      return { ...defaultEnv, ...process.env, ...env }
     } catch (e) {
-      return { ...process.env }
+      return { ...defaultEnv, ...process.env }
     }
   }
 
@@ -99,7 +101,16 @@ export default class Options {
         }
       }
     }
+    imports[this.pkg.name] = this.outputMainUrl
     return { ...(this.pkg.importmap || {}), imports }
+  }
+
+  get outputMainUrl(): string {
+    if (this.env.NODE_ENV === 'development') {
+      return `http://localhost:${this.env.PORT}/index.js`
+    } else {
+      return `https://cdn.jsdelivr.net/npm/${this.pkg.name}@${this.pkg.version}/build/index.js`
+    }
   }
 
   get extensions(): string[] {
