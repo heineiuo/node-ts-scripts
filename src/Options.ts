@@ -40,9 +40,17 @@ export default class Options {
       throw new Error('node-ts-scripts: need an entry file')
     }
     const command = argv._[0]
-    const entryFile = argv._[1]
+    let entryFile = argv._[1]
 
     const dir = process.cwd()
+
+    entryFile = path.resolve(dir, entryFile)
+    let outputDir = './build'
+    if (argv._[2]) {
+      outputDir = argv._[2]
+    }
+    outputDir = path.resolve(dir, outputDir)
+
     const pkg = JSON.parse(
       await fs.readFile(path.resolve(dir, './package.json'), 'utf8')
     )
@@ -50,6 +58,7 @@ export default class Options {
       command,
       argv,
       entryFile,
+      outputDir,
       dir,
       pkg,
       env: await this.loadEnv(dir, command),
@@ -68,6 +77,7 @@ export default class Options {
     [x: string]: any
   }
   entryFile: string
+  output: string
 
   constructor(opt: any) {
     this.argv = opt.argv
@@ -76,6 +86,7 @@ export default class Options {
     this.env = opt.env
     this.command = opt.command
     this.entryFile = opt.entryFile
+    this.output = opt.outputDir
   }
 
   get format(): ModuleFormat {

@@ -13,6 +13,7 @@ import babel from '@babel/core'
 import glob from 'glob'
 import BabelOptions from './BabelOptions'
 import * as ts from 'typescript'
+import { Transformer } from './Transformer'
 
 async function dts(options: Options): Promise<void> {
   console.log('Compiling dts files...')
@@ -163,6 +164,12 @@ async function run(options: Options): Promise<void> {
   }
 }
 
+async function transform(options: Options): Promise<void> {
+  const transformer = new Transformer(options)
+  await transformer.transform(options.entryFile, options.output)
+  console.log('transform success')
+}
+
 async function main(): Promise<void> {
   const options = await Options.from()
 
@@ -173,6 +180,11 @@ async function main(): Promise<void> {
 
   if (options.command === 'bundle') {
     bundle(options)
+    return
+  }
+
+  if (options.command === 'transform') {
+    transform(options)
     return
   }
 }
