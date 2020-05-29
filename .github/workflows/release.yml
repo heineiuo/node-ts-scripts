@@ -30,10 +30,11 @@ jobs:
       - name: Run npm build
         run: |
           npm install
-          npx node-ts-scripts bundle
+          npx node-ts-scripts bundle src/index.ts --platform=node
           npm run build
         env:
           CI: true
+          NODE_ENV: production
       
       - name: Create Changelogs
         id: changelog
