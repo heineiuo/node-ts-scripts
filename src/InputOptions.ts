@@ -56,7 +56,9 @@ export default class InputOptions {
     result.push(
       resolve({
         mainFields:
-          this.options.platform === 'browser' ? ['browser'] : ['main'],
+          this.options.platform === 'browser'
+            ? ['browser']
+            : ['module', 'main'],
         browser: this.options.platform === 'browser',
         extensions: this.options.extensions,
         preferBuiltins: this.options.platform !== 'browser',
@@ -87,8 +89,14 @@ export default class InputOptions {
     let result = this.filterbuiltins()
     if (this.options.platform === 'node') {
       result = result.concat(Object.keys(this.options.pkg.dependencies || {}))
+      result = result.concat(
+        Object.keys(this.options.pkg.peerDependencies || {})
+      )
     } else if (this.options.platform === 'browser') {
       result = result.concat(Object.keys(this.options.importmap.imports))
+      result = result.concat(
+        Object.keys(this.options.pkg.peerDependencies || {})
+      )
     }
     return result
   }
