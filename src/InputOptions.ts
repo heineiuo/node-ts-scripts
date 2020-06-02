@@ -55,7 +55,8 @@ export default class InputOptions {
     }
     result.push(
       resolve({
-        mainFields: ['main', 'browser'],
+        mainFields:
+          this.options.platform === 'browser' ? ['browser'] : ['main'],
         browser: this.options.platform === 'browser',
         extensions: this.options.extensions,
         preferBuiltins: this.options.platform !== 'browser',
