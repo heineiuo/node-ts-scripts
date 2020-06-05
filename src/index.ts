@@ -12,36 +12,22 @@ import { promises as fs } from 'fs'
 import babel from '@babel/core'
 import glob from 'glob'
 import BabelOptions from './BabelOptions'
-import * as ts from 'typescript'
 import { Transformer } from './Transformer'
+// import { DtsBuilder } from './DtsBuilder'
+import { DtsBundler } from './DtsBundler'
 
 async function dts(options: Options): Promise<void> {
-  console.log('Compiling dts files...')
-  const files = glob.sync(`${options.dir}/src/**/*`)
-  const compilerOptions = {
-    target: ts.ScriptTarget.ES5,
-    lib: ['dom', 'dom.iterable', 'esnext'],
-    allowJs: true,
-    skipLibCheck: true,
-    esModuleInterop: true,
-    allowSyntheticDefaultImports: true,
-    strict: true,
-    forceConsistentCasingInFileNames: true,
-    module: ts.ModuleKind.ESNext,
-    moduleResolution: ts.ModuleResolutionKind.NodeJs,
-    resolveJsonModule: true,
-    isolatedModules: true,
-    noEmit: false,
-    emitDeclarationOnly: true,
-    declaration: true,
-    jsx: ts.JsxEmit.Preserve,
-    outDir: path.resolve(options.dir, './build'),
-    declarationDir: path.resolve(options.dir, './build'),
-  } as ts.CompilerOptions
+  // const builder = new DtsBuilder(options)
+  // builder.build()
+  try {
+    console.log('Bundling dts files...')
 
-  const program = ts.createProgram(files, compilerOptions)
-  program.emit()
-  console.log('Compiled dts success')
+    const bundler = new DtsBundler(options)
+    await bundler.bundle()
+    console.log('Bundling dts success')
+  } catch (e) {
+    console.log('Bundling dts fail, You can use "tsc" as fallback solution')
+  }
 }
 
 // WIP
@@ -63,6 +49,7 @@ async function buildDir(options: Options): Promise<void> {
     }
   }
 }
+
 async function buildHtml(options: Options): Promise<void> {
   const htmlGenerator = new HTMLGenerator(options)
   await fs.mkdir(path.resolve(options.dir, './build'), { recursive: true })
