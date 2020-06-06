@@ -69,8 +69,12 @@ async function buildHtml(options: Options): Promise<void> {
 async function bundle(options: Options): Promise<void> {
   const { input, plugins, external } = new InputOptions(options)
   const bundle = await rollup.rollup({ input, plugins, external })
-  const { dir, format } = new OutputOptions(options)
-  await bundle.write({ dir, format })
+  const { dir, format, name } = new OutputOptions(options)
+  if (format === 'umd') {
+    await bundle.write({ dir, format, name })
+  } else {
+    await bundle.write({ dir, format })
+  }
   await dts(options)
   console.log('Bundle success')
   if (options.platform === 'browser') {
