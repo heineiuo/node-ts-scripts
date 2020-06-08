@@ -124,6 +124,9 @@ async function run(options: Options): Promise<void> {
       '/systemjs',
       express.static(path.resolve(options.dir, './node_modules/systemjs'))
     )
+    app.get('/', async (_, res) => {
+      res.send(await htmlGenerator.renderToString())
+    })
     app.use(express.static(path.resolve(process.cwd(), './.cache')))
     app.use(express.static(path.resolve(process.cwd(), './public')))
 
