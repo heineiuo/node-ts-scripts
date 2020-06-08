@@ -18,7 +18,7 @@ export default class InputOptions {
 
   private options: Options
 
-  private filterbuiltins(): string[] {
+  private getBuiltinModules(): string[] {
     return builtins.filter(item => {
       if (this.options.pkg.dependencies) {
         if (this.options.pkg.dependencies.hasOwnProperty(item)) return false
@@ -86,7 +86,7 @@ export default class InputOptions {
   }
 
   get external(): string[] {
-    let result = this.filterbuiltins()
+    let result = this.getBuiltinModules()
     if (this.options.platform === 'node') {
       result = result.concat(Object.keys(this.options.pkg.dependencies || {}))
       result = result.concat(

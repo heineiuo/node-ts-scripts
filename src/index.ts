@@ -113,10 +113,6 @@ async function run(options: Options): Promise<void> {
     })
 
     const app = express()
-    app.use(async (req, res, next) => {
-      if (req.path.indexOf('.') > -1) return next()
-      res.send(await htmlGenerator.renderToString())
-    })
 
     app.use(cors())
 
@@ -130,6 +126,10 @@ async function run(options: Options): Promise<void> {
     )
     app.use(express.static(path.resolve(process.cwd(), './.cache')))
     app.use(express.static(path.resolve(process.cwd(), './public')))
+
+    app.use(async (_, res) => {
+      res.send(await htmlGenerator.renderToString())
+    })
 
     const port = options.env.PORT || 3000
     app.listen(port, () => {
