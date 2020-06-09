@@ -75,12 +75,14 @@ async function bundle(options: Options): Promise<void> {
   } else {
     await bundle.write({ dir, format })
   }
-  await dts(options)
-  console.log('Bundle success')
-  if (options.platform === 'browser') {
-    await buildHtml(options)
-    console.log('Create html success')
+  console.log('Bundle js success')
+  if (options.argv.dts) {
+    await dts(options)
   }
+  if (options.platform === 'browser' && options.argv.html) {
+    await buildHtml(options)
+  }
+  console.log('Bundle finished')
 }
 
 async function run(options: Options): Promise<void> {
