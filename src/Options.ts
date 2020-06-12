@@ -120,7 +120,8 @@ export default class Options {
     if (this.env.NODE_ENV === 'development') {
       return `http://localhost:${this.env.PORT}/index.js`
     } else {
-      return `https://cdn.jsdelivr.net/npm/${this.pkg.name}@${this.pkg.version}/build/index.js`
+      const baseURL = this.argv.baseURL || 'https://cdn.jsdelivr.net/npm'
+      return `${baseURL}/${this.pkg.name}@${this.pkg.version}/build/index.js`
     }
   }
 
