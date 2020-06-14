@@ -1,12 +1,11 @@
 import { Plugin } from 'rollup'
 import Options from './Options'
 import builtins from 'builtin-modules'
-import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import resolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
 import image from '@rollup/plugin-image'
-import babel from 'rollup-plugin-babel'
+import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import BabelOptions from './BabelOptions'
 import postcss from 'rollup-plugin-postcss'
@@ -19,7 +18,7 @@ export default class InputOptions {
   private options: Options
 
   private getBuiltinModules(): string[] {
-    return builtins.filter(item => {
+    return builtins.filter((item) => {
       if (this.options.pkg.dependencies) {
         if (this.options.pkg.dependencies.hasOwnProperty(item)) return false
       }
@@ -62,14 +61,6 @@ export default class InputOptions {
         browser: this.options.platform === 'browser',
         extensions: this.options.extensions,
         preferBuiltins: this.options.platform !== 'browser',
-      })
-    )
-    result.push(
-      commonjs({
-        include: 'node_modules/**',
-        ignoreGlobal: false,
-        sourceMap: false,
-        namedExports: {},
       })
     )
     result.push(babel(babelOptions))

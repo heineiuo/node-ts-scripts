@@ -11,6 +11,6 @@ export default class WatchOptions {
     return ['node_modules/**']
   }
   get include(): string[] {
-    return ['src/**']
+    return ['./**']
   }
 }
