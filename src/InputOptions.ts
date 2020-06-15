@@ -5,6 +5,7 @@ import json from '@rollup/plugin-json'
 import resolve from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
 import image from '@rollup/plugin-image'
+import commonjs from '@rollup/plugin-commonjs'
 import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import BabelOptions from './BabelOptions'
@@ -61,6 +62,13 @@ export default class InputOptions {
         browser: this.options.platform === 'browser',
         extensions: this.options.extensions,
         preferBuiltins: this.options.platform !== 'browser',
+      })
+    )
+    result.push(
+      commonjs({
+        include: 'node_modules/**',
+        ignoreGlobal: false,
+        sourceMap: false,
       })
     )
     result.push(babel(babelOptions))
