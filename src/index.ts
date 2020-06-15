@@ -97,6 +97,9 @@ async function run(options: Options): Promise<void> {
       watch: new WatchOptions(options),
     },
   ])
+
+  const tmpOutputFileName = path.basename(input)
+
   const htmlGenerator = new HTMLGenerator(options)
 
   console.log(`Platform: ${options.platform}`)
@@ -142,16 +145,20 @@ async function run(options: Options): Promise<void> {
     })
   } else {
     let child: cp.ChildProcess | null = null
-    watcher.on('event', event => {
+    watcher.on('event', (event) => {
       process.stdout.cursorTo(0)
       child?.kill()
       if (event.code === 'ERROR') {
         console.log(event.error)
       } else if (event.code === 'END') {
-        child = cp.fork(path.resolve(options.dir, './.cache/index.js'), [], {
-          env: options.env,
-          cwd: options.dir,
-        })
+        child = cp.fork(
+          path.resolve(options.dir, `./.cache/${tmpOutputFileName}.js`),
+          [],
+          {
+            env: options.env,
+            cwd: options.dir,
+          }
+        )
         process.stdout.write('Compiled success')
       } else {
         process.stdout.write('Compiling...')
