@@ -98,7 +98,11 @@ async function run(options: Options): Promise<void> {
     },
   ])
 
-  const tmpOutputFileName = path.basename(input)
+  let tmpOutputFileName = path.basename(input)
+  tmpOutputFileName = tmpOutputFileName.substr(
+    0,
+    tmpOutputFileName.length - path.extname(input).length
+  )
 
   const htmlGenerator = new HTMLGenerator(options)
 
