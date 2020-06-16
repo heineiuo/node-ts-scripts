@@ -8,9 +8,13 @@ export default class OutputOptions {
   }
   private options: Options
   get dir(): string {
-    const folder =
-      this.options.env.NODE_ENV === 'production' ? 'build' : '.cache'
-    return path.resolve(this.options.dir, `./${folder}`)
+    if (this.options.argv.outputDir) {
+      return path.resolve(this.options.dir, this.options.argv.outputDir)
+    }
+    if (this.options.env.NODE_ENV === 'development') {
+      return path.resolve(this.options.dir, 'build', this.options.env.NODE_ENV)
+    }
+    return path.resolve(this.options.dir, 'build', this.options.env.NODE_ENV)
   }
   // file: "build/index.js",
   get format(): ModuleFormat {
