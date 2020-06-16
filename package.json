@@ -1,6 +1,6 @@
 {
   "name": "node-ts-scripts",
-  "version": "0.12.10",
+  "version": "0.12.11",
   "description": "Develop browser app and node app in one cli",
   "files": [
     "build/**/*.js",
@@ -8,7 +8,7 @@
   ],
   "bin": "bin/node-ts-scripts",
   "scripts": {
-    "build": "node build bundle src/index.ts",
+    "build": "node build bundle src/index.ts --outputDir=build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
