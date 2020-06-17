@@ -155,14 +155,10 @@ async function run(options: Options): Promise<void> {
       if (event.code === 'ERROR') {
         console.log(event.error)
       } else if (event.code === 'END') {
-        child = cp.fork(
-          path.resolve(options.dir, `./.cache/${tmpOutputFileName}.js`),
-          [],
-          {
-            env: options.env,
-            cwd: options.dir,
-          }
-        )
+        child = cp.fork(path.resolve(dir, `${tmpOutputFileName}.js`), [], {
+          env: options.env,
+          cwd: options.dir,
+        })
         process.stdout.write('Compiled success')
       } else {
         process.stdout.write('Compiling...')
