@@ -26,6 +26,7 @@ async function dts(options: Options): Promise<void> {
     await bundler.bundle()
     console.log('Bundling dts success')
   } catch (e) {
+    console.error(e)
     console.log('Bundling dts fail, You can use "tsc" as fallback solution')
   }
 }
@@ -136,7 +137,7 @@ async function run(options: Options): Promise<void> {
     app.get('/', async (_, res) => {
       res.send(await htmlGenerator.renderToString())
     })
-    app.use(express.static(path.resolve(process.cwd(), './.cache')))
+    app.use(express.static(dir))
     app.use(express.static(path.resolve(process.cwd(), './public')))
 
     app.use(async (_, res) => {
