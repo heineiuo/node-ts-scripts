@@ -1,6 +1,6 @@
 {
   "name": "node-ts-scripts",
-  "version": "0.12.13",
+  "version": "0.12.14",
   "description": "Develop browser app and node app in one cli",
   "files": [
     "build/**/*.js",
@@ -8,7 +8,7 @@
   ],
   "bin": "bin/node-ts-scripts",
   "scripts": {
-    "build": "node build bundle src/index.ts --outputDir=build",
+    "build": "node build bundle src/index.ts --outputDir=build --platform=node",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,14 +24,14 @@
   "homepage": "https://github.com/heineiuo/node-ts-scripts#readme",
   "dependencies": {
     "@babel/cli": "^7.10.1",
-    "@babel/core": "^7.7.5",
+    "@babel/core": "^7.11.1",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
     "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@babel/plugin-syntax-bigint": "^7.7.4",
-    "@babel/preset-env": "^7.7.6",
-    "@babel/preset-react": "^7.8.3",
-    "@babel/preset-typescript": "^7.7.4",
-    "@rollup/plugin-babel": "^5.0.3",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
+    "@rollup/plugin-babel": "^5.1.0",
     "@rollup/plugin-commonjs": "^13.0.0",
     "@rollup/plugin-image": "^2.0.5",
     "@rollup/plugin-json": "^4.1.0",
@@ -44,6 +44,7 @@
     "@types/koa-cors": "0.0.0",
     "@types/koa-graphql": "^0.8.3",
     "@types/koa-mount": "^4.0.0",
+    "@types/node": "^14.0.27",
     "@types/node-fetch": "^2.5.5",
     "@types/uuid": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^2.11.0",
@@ -52,8 +53,8 @@
     "builtin-modules": "^3.1.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "dts-bundle-generator": "^4.3.0",
-    "eslint": "^6.7.2",
+    "dts-bundle-generator": "^5.3.0",
+    "eslint": "^7.6.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-config-react-app": "^5.2.1",
     "eslint-plugin-flowtype": "^4.6.0",
@@ -73,43 +74,11 @@
     "rollup-plugin-postcss": "^2.6.2",
     "rollup-plugin-terser": "^5.3.0",
     "systemjs": "^6.2.6",
-    "typescript": "^3.7.3",
+    "typescript": "^3.9.7",
     "yargs": "^15.0.2"
   },
   "devDependencies": {
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
-  },
-  "platform": "node",
-  "prettier": {
-    "parser": "typescript",
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "semi": false,
-    "singleQuote": true
-  },
-  "eslintConfig": {
-    "env": {
-      "browser": true,
-      "es6": true
-    },
-    "extends": [
-      "plugin:@typescript-eslint/recommended",
-      "prettier",
-      "prettier/@typescript-eslint"
-    ],
-    "globals": {
-      "Atomics": "readonly",
-      "SharedArrayBuffer": "readonly"
-    },
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "ecmaVersion": 2018,
-      "sourceType": "module"
-    },
-    "plugins": [
-      "@typescript-eslint"
-    ],
-    "rules": {}
   }
 }
