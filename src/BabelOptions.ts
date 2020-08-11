@@ -33,7 +33,7 @@ export default class BabelOptions {
   presets: any[]
   plugins: any[]
 
-  babelHelpers = 'bundled'
+  babelHelpers: 'bundled' = 'bundled'
 
   get include(): string[] {
     return ['src/**/*']

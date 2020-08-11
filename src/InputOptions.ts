@@ -31,17 +31,17 @@ export default class InputOptions {
   }
 
   get plugins(): Plugin[] {
-    const result: Plugin[] = []
+    const plugins: Plugin[] = []
     const babelOptions = new BabelOptions(this.options)
-    result.push(
+    plugins.push(
       postcss({
         extract: false,
         modules: this.options.env.USE_CSS_MODULES === 'true',
         use: [],
       })
     )
-    result.push(image())
-    result.push(
+    plugins.push(image())
+    plugins.push(
       json({
         include: ['src/**', 'node_modules/**'],
         preferConst: true,
@@ -51,9 +51,9 @@ export default class InputOptions {
       })
     )
     if (this.options.platform === 'browser') {
-      result.push(replace(this.options.replaceMap))
+      plugins.push(replace(this.options.replaceMap))
     }
-    result.push(
+    plugins.push(
       resolve({
         mainFields:
           this.options.platform === 'browser'
@@ -64,20 +64,30 @@ export default class InputOptions {
         preferBuiltins: this.options.platform !== 'browser',
       })
     )
-    result.push(
+    plugins.push(
       commonjs({
         include: 'node_modules/**',
         ignoreGlobal: false,
         sourceMap: false,
       })
     )
-    result.push(babel(babelOptions))
+    plugins.push(
+      babel({
+        babelrc: false,
+        presets: babelOptions.presets,
+        plugins: babelOptions.plugins,
+        include: babelOptions.include,
+        exclude: babelOptions.exclude,
+        babelHelpers: babelOptions.babelHelpers,
+        extensions: babelOptions.extensions,
+      })
+    )
 
     if (this.options.env.NODE_ENV === 'production') {
-      result.push(terser())
+      plugins.push(terser())
     }
 
-    return result
+    return plugins
   }
 
   get input(): string {
