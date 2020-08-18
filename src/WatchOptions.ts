@@ -10,7 +10,7 @@ export default class WatchOptions {
   get exclude(): string[] {
     return ['node_modules/**']
   }
-  get include(): string[] {
-    return ['./**']
-  }
+  // get include(): string[] {
+  //   return ['./**']
+  // }
 }

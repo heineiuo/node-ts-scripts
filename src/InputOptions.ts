@@ -43,7 +43,8 @@ export default class InputOptions {
     plugins.push(image())
     plugins.push(
       json({
-        include: ['src/**', 'node_modules/**'],
+        // include: [/src/, /fixtures/, /tests/, /node_modules/],
+        include: ['**'],
         preferConst: true,
         indent: '  ',
         compact: true,
@@ -66,7 +67,7 @@ export default class InputOptions {
     )
     plugins.push(
       commonjs({
-        include: 'node_modules/**',
+        include: [/node_modules/, /build/],
         ignoreGlobal: false,
         sourceMap: false,
       })
@@ -76,7 +77,7 @@ export default class InputOptions {
         babelrc: false,
         presets: babelOptions.presets,
         plugins: babelOptions.plugins,
-        include: babelOptions.include,
+        // include: babelOptions.include,
         exclude: babelOptions.exclude,
         babelHelpers: babelOptions.babelHelpers,
         extensions: babelOptions.extensions,

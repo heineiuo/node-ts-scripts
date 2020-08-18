@@ -1,6 +1,6 @@
 {
   "name": "node-ts-scripts",
-  "version": "0.12.15",
+  "version": "0.12.16",
   "description": "Develop browser app and node app in one cli",
   "files": [
     "build/**/*.js",
@@ -39,6 +39,7 @@
     "@rollup/plugin-replace": "^2.3.3",
     "@types/express": "^4.17.2",
     "@types/glob": "^7.1.1",
+    "@types/jest": "^26.0.9",
     "@types/jsdom": "^16.1.0",
     "@types/koa": "^2.11.2",
     "@types/koa-cors": "0.0.0",
