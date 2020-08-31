@@ -10,6 +10,7 @@ import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import BabelOptions from './BabelOptions'
 import postcss from 'rollup-plugin-postcss'
+import nodePolyfills from 'rollup-plugin-node-polyfills'
 
 export default class InputOptions {
   constructor(options: Options) {
@@ -54,6 +55,11 @@ export default class InputOptions {
     if (this.options.platform === 'browser') {
       plugins.push(replace(this.options.replaceMap))
     }
+
+    if (this.options.argv.polyfills) {
+      plugins.push(nodePolyfills())
+    }
+
     plugins.push(
       resolve({
         mainFields:
@@ -62,9 +68,12 @@ export default class InputOptions {
             : ['module', 'main'],
         browser: this.options.platform === 'browser',
         extensions: this.options.extensions,
-        preferBuiltins: this.options.platform !== 'browser',
+        preferBuiltins: this.options.argv.polyfills
+          ? false
+          : this.options.platform !== 'browser',
       })
     )
+
     plugins.push(
       commonjs({
         include: [/node_modules/, /build/],
