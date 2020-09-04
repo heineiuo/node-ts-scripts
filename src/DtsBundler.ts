@@ -50,7 +50,7 @@ export class DtsBundler {
             emitDeclarationOnly: true,
             noEmit: false,
           },
-          include: ['src'],
+          include: ['*'],
           exclude: ['node_modules'],
         })
       )

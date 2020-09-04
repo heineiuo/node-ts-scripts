@@ -44,7 +44,6 @@ export default class InputOptions {
     plugins.push(image())
     plugins.push(
       json({
-        // include: [/src/, /fixtures/, /tests/, /node_modules/],
         include: ['**'],
         preferConst: true,
         indent: '  ',
@@ -64,7 +63,7 @@ export default class InputOptions {
       resolve({
         mainFields:
           this.options.platform === 'browser'
-            ? ['browser']
+            ? ['browser', 'main']
             : ['module', 'main'],
         browser: this.options.platform === 'browser',
         extensions: this.options.extensions,
@@ -86,7 +85,7 @@ export default class InputOptions {
         babelrc: false,
         presets: babelOptions.presets,
         plugins: babelOptions.plugins,
-        // include: babelOptions.include,
+        include: babelOptions.include,
         exclude: babelOptions.exclude,
         babelHelpers: babelOptions.babelHelpers,
         extensions: babelOptions.extensions,
@@ -108,15 +107,10 @@ export default class InputOptions {
     let result = this.getBuiltinModules()
     if (this.options.platform === 'node') {
       result = result.concat(Object.keys(this.options.pkg.dependencies || {}))
-      result = result.concat(
-        Object.keys(this.options.pkg.peerDependencies || {})
-      )
     } else if (this.options.platform === 'browser') {
       result = result.concat(Object.keys(this.options.importmap.imports))
-      result = result.concat(
-        Object.keys(this.options.pkg.peerDependencies || {})
-      )
     }
+    result = result.concat(Object.keys(this.options.pkg.peerDependencies || {}))
     return result
   }
 }

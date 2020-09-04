@@ -35,9 +35,9 @@ export default class BabelOptions {
 
   babelHelpers: 'bundled' = 'bundled'
 
-  // get include(): string | RegExp[] {
-  //   return [/src/, /tests/, /fixtures/]
-  // }
+  get include(): string | RegExp[] {
+    return [/.*/]
+  }
   get exclude(): string | RegExp[] {
     return [/node_modules/, /build/]
   }
