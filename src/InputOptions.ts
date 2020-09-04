@@ -10,7 +10,6 @@ import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import BabelOptions from './BabelOptions'
 import postcss from 'rollup-plugin-postcss'
-import nodePolyfills from 'rollup-plugin-node-polyfills'
 
 export default class InputOptions {
   constructor(options: Options) {
@@ -18,18 +17,6 @@ export default class InputOptions {
   }
 
   private options: Options
-
-  private getBuiltinModules(): string[] {
-    return builtins.filter((item) => {
-      if (this.options.pkg.dependencies) {
-        if (this.options.pkg.dependencies.hasOwnProperty(item)) return false
-      }
-      if (this.options.pkg.devDependencies) {
-        if (this.options.pkg.devDependencies.hasOwnProperty(item)) return false
-      }
-      return true
-    })
-  }
 
   get plugins(): Plugin[] {
     const plugins: Plugin[] = []
@@ -55,10 +42,6 @@ export default class InputOptions {
       plugins.push(replace(this.options.replaceMap))
     }
 
-    if (this.options.argv.polyfills) {
-      plugins.push(nodePolyfills())
-    }
-
     plugins.push(
       resolve({
         mainFields:
@@ -67,9 +50,7 @@ export default class InputOptions {
             : ['module', 'main'],
         browser: this.options.platform === 'browser',
         extensions: this.options.extensions,
-        preferBuiltins: this.options.argv.polyfills
-          ? false
-          : this.options.platform !== 'browser',
+        preferBuiltins: this.options.platform !== 'browser',
       })
     )
 
@@ -104,13 +85,20 @@ export default class InputOptions {
   }
 
   get external(): string[] {
-    let result = this.getBuiltinModules()
-    if (this.options.platform === 'node') {
-      result = result.concat(Object.keys(this.options.pkg.dependencies || {}))
-    } else if (this.options.platform === 'browser') {
-      result = result.concat(Object.keys(this.options.importmap.imports))
+    if (this.options.platform === 'browser') {
+      return Object.keys(this.options.importmap.imports)
     }
-    result = result.concat(Object.keys(this.options.pkg.peerDependencies || {}))
-    return result
+
+    if (this.options.platform === 'node') {
+      const result = builtins
+        .concat(Object.keys(this.options.pkg.dependencies || {}))
+        .concat(Object.keys(this.options.pkg.peerDependencies || {}))
+
+      if (!this.options.pkg.devDependencies) return result
+      return result.filter((name) => {
+        return !this.options.pkg.devDependencies.hasOwnProperty(name)
+      })
+    }
+    return []
   }
 }
