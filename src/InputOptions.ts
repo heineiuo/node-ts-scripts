@@ -84,21 +84,28 @@ export default class InputOptions {
     return this.options.entryFile
   }
 
+  // If packages was installed to dependencies or peerDependencies,
+  // and not installed to devDependencies,
+  // it will be treat as external
+  //
+  // Although in brwoser, packages is not really compiled or
+  // bundled for useage if it was add to importmap,
+  // but in real development,
+  // packages should be installed to support type definition.
   get external(): string[] {
-    if (this.options.platform === 'browser') {
-      return Object.keys(this.options.importmap.imports)
-    }
+    let result = []
 
     if (this.options.platform === 'node') {
-      const result = builtins
-        .concat(Object.keys(this.options.pkg.dependencies || {}))
-        .concat(Object.keys(this.options.pkg.peerDependencies || {}))
-
-      if (!this.options.pkg.devDependencies) return result
-      return result.filter((name) => {
-        return !this.options.pkg.devDependencies.hasOwnProperty(name)
-      })
+      result = result.concat(builtins)
     }
-    return []
+
+    result = result
+      .concat(Object.keys(this.options.pkg.dependencies || {}))
+      .concat(Object.keys(this.options.pkg.peerDependencies || {}))
+
+    if (!this.options.pkg.devDependencies) return result
+    return result.filter((name) => {
+      return !this.options.pkg.devDependencies.hasOwnProperty(name)
+    })
   }
 }

@@ -1,5 +1,5 @@
 import { argv } from 'yargs'
-// import findUp from 'find-up'
+import findUp from 'find-up'
 import path from 'path'
 import { promises as fs } from 'fs'
 import dotenv from 'dotenv'
@@ -97,21 +97,39 @@ export default class Options {
   }
 
   get importmap(): any {
-    let rawImports = {}
+    let rawImports = null
     const imports = {}
+
     try {
-      rawImports = this.pkg.importmap.imports
+      const importmapFile = findUp.sync('importmap.config.js')
+      if (importmapFile) {
+        rawImports = require(importmapFile).imports
+      }
     } catch (e) {}
+    if (!rawImports) {
+      // fallback to `imports` property in package.json
+      try {
+        rawImports = this.pkg.importmap.imports
+        console.warn(
+          'Define importmap in package.json is deprecated, ' +
+            'please use importmap.config.js instead.'
+        )
+      } catch (e) {}
+    }
+
+    // node-ts-scripts support use different url based on
+    // different NODE_ENV value.
     for (const [key, value] of Object.entries(rawImports)) {
       if (typeof value === 'string') {
         imports[key] = value
       } else {
-        const environmentValue = value[this.env.NODE_ENV]
-        if (typeof environmentValue === 'string') {
-          imports[key] = environmentValue
+        const nodeEnv = value[this.env.NODE_ENV]
+        if (typeof nodeEnv === 'string') {
+          imports[key] = nodeEnv
         }
       }
     }
+
     imports[this.pkg.name] = this.outputMainUrl
     return { ...(this.pkg.importmap || {}), imports }
   }
