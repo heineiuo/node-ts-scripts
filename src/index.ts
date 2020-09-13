@@ -127,7 +127,22 @@ async function run(options: Options): Promise<void> {
     app.use(cors())
 
     app.use('/importmap.json', (req, res) => {
-      res.json(options.importmap)
+      res.json(options.importmap || {})
+    })
+
+    app.use('/importmap.:env.json', async (req, res) => {
+      try {
+        const file = await fs.readFile(
+          path.resolve(
+            process.cwd(),
+            `./public/importmap.${req.params.env}.json`
+          ),
+          'utf8'
+        )
+        res.end(file)
+      } catch (e) {
+        res.json(options.importmap || {})
+      }
     })
 
     app.use(
