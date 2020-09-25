@@ -133,10 +133,7 @@ async function run(options: Options): Promise<void> {
     app.use('/importmap.:env.json', async (req, res) => {
       try {
         const file = await fs.readFile(
-          path.resolve(
-            process.cwd(),
-            `./public/importmap.${req.params.env}.json`
-          ),
+          path.resolve(options.publicDir, `./importmap.${req.params.env}.json`),
           'utf8'
         )
         res.end(file)
@@ -153,7 +150,7 @@ async function run(options: Options): Promise<void> {
       res.send(await htmlGenerator.renderToString())
     })
     app.use(express.static(dir))
-    app.use(express.static(path.resolve(process.cwd(), './public')))
+    app.use(express.static(options.publicDir))
 
     app.use(async (_, res) => {
       res.send(await htmlGenerator.renderToString())

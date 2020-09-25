@@ -19,7 +19,7 @@ export default class Options {
       }
     }
 
-    const envfile = `.env.${process.env.NODE_ENV}`
+    const envfile = (argv.envfile as string) || `.env.${process.env.NODE_ENV}`
     const defaultEnv = {
       PORT: 3000,
     }
@@ -54,11 +54,16 @@ export default class Options {
     const pkg = JSON.parse(
       await fs.readFile(path.resolve(dir, './package.json'), 'utf8')
     )
+
+    let publicDir = (argv.publicDir as string) || './public'
+    publicDir = path.resolve(dir, publicDir)
+
     const opt = {
       command,
       argv,
       entryFile,
       outputDir,
+      publicDir,
       dir,
       pkg,
       env: await this.loadEnv(dir, command),
@@ -78,6 +83,7 @@ export default class Options {
   }
   entryFile: string
   output: string
+  publicDir: string
 
   constructor(opt: any) {
     this.argv = opt.argv
@@ -86,6 +92,7 @@ export default class Options {
     this.env = opt.env
     this.command = opt.command
     this.entryFile = opt.entryFile
+    this.publicDir = opt.publicDir
     this.output = opt.outputDir
   }
 
