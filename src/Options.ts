@@ -11,7 +11,7 @@ import commonjs from '@rollup/plugin-commonjs'
 import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import postcss from 'rollup-plugin-postcss'
-
+import browserslist from 'browserslist'
 export default class Options {
   command: string
   dir: string
@@ -151,9 +151,10 @@ export default class Options {
             useBuiltIns: false,
             targets: {
               node: 'current',
-              browsers: this.pkg.browserslist
-                ? this.pkg.browserslist[this.env.NODE_ENV]
-                : undefined,
+              browsers: browserslist(null, {
+                path: this.dir,
+                env: this.env.NODE_ENV,
+              }),
             },
           },
         ],
