@@ -109,7 +109,7 @@ export default class Options {
     return result
   }
 
-  get platform(): string {
+  get platform(): 'node' | 'browser' {
     return this.argv.platform || this.pkg.platform || 'node'
   }
 
@@ -149,13 +149,17 @@ export default class Options {
           {
             loose: true,
             useBuiltIns: false,
-            targets: {
-              node: 'current',
-              browsers: browserslist(null, {
-                path: this.dir,
-                env: this.env.NODE_ENV,
-              }),
-            },
+            targets:
+              this.platform === 'node'
+                ? {
+                    node: 'current',
+                  }
+                : {
+                    browsers: browserslist(null, {
+                      path: this.dir,
+                      env: this.env.NODE_ENV,
+                    }),
+                  },
           },
         ],
       ],
