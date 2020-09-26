@@ -1,77 +1,18 @@
-import { argv } from 'yargs'
+import { ModuleFormat } from 'rollup'
 import findUp from 'find-up'
 import path from 'path'
-import { promises as fs } from 'fs'
-import dotenv from 'dotenv'
-import { ModuleFormat } from 'rollup'
+import builtins from 'builtin-modules'
+import { Plugin } from 'rollup'
+import json from '@rollup/plugin-json'
+import resolve from '@rollup/plugin-node-resolve'
+import replace from '@rollup/plugin-replace'
+import image from '@rollup/plugin-image'
+import commonjs from '@rollup/plugin-commonjs'
+import babel from '@rollup/plugin-babel'
+import { terser } from 'rollup-plugin-terser'
+import postcss from 'rollup-plugin-postcss'
 
 export default class Options {
-  static async loadEnv(dir: string, command: string): Promise<any> {
-    if (!process.env.NODE_ENV) {
-      if (
-        command === 'build' ||
-        command === 'bundle' ||
-        command === 'build-html'
-      ) {
-        process.env.NODE_ENV = 'production'
-      } else {
-        process.env.NODE_ENV = 'development'
-      }
-    }
-
-    const envfile = (argv.envfile as string) || `.env.${process.env.NODE_ENV}`
-    const defaultEnv = {
-      PORT: 3000,
-    }
-    try {
-      const env = dotenv.parse(await fs.readFile(path.resolve(dir, envfile)))
-      return { ...defaultEnv, ...process.env, ...env }
-    } catch (e) {
-      return { ...defaultEnv, ...process.env }
-    }
-  }
-
-  static async from(): Promise<Options> {
-    if (argv._.length === 0) {
-      throw new Error('node-ts-scripts command: run, bundle')
-    }
-
-    if (argv._.length === 1) {
-      throw new Error('node-ts-scripts: need an entry file')
-    }
-    const command = argv._[0]
-    let entryFile = argv._[1]
-
-    const dir = process.cwd()
-
-    entryFile = path.resolve(dir, entryFile)
-    let outputDir = './build'
-    if (argv._[2]) {
-      outputDir = argv._[2]
-    }
-    outputDir = path.resolve(dir, outputDir)
-
-    const pkg = JSON.parse(
-      await fs.readFile(path.resolve(dir, './package.json'), 'utf8')
-    )
-
-    let publicDir = (argv.publicDir as string) || './public'
-    publicDir = path.resolve(dir, publicDir)
-
-    const opt = {
-      command,
-      argv,
-      entryFile,
-      outputDir,
-      publicDir,
-      dir,
-      pkg,
-      env: await this.loadEnv(dir, command),
-    }
-
-    return new Options(opt)
-  }
-
   command: string
   dir: string
   pkg: any
@@ -82,18 +23,23 @@ export default class Options {
     [x: string]: any
   }
   entryFile: string
-  output: string
-  publicDir: string
 
   constructor(opt: any) {
     this.argv = opt.argv
     this.dir = opt.dir
-    this.pkg = opt.pkg
     this.env = opt.env
+    this.pkg = opt.pkg
     this.command = opt.command
     this.entryFile = opt.entryFile
-    this.publicDir = opt.publicDir
-    this.output = opt.outputDir
+  }
+
+  get outputDir(): string {
+    const outputDir = this.argv.outputDir || `./build/${this.env.NODE_ENV}`
+    return path.resolve(this.dir, outputDir)
+  }
+
+  get publicDir(): string {
+    return path.resolve(this.dir, './public')
   }
 
   get format(): ModuleFormat {
@@ -165,5 +111,113 @@ export default class Options {
 
   get platform(): string {
     return this.argv.platform || this.pkg.platform || 'node'
+  }
+
+  // If packages was installed to dependencies or peerDependencies,
+  // and not installed to devDependencies,
+  // it will be treat as external
+  //
+  // Although in brwoser, packages is not really compiled or
+  // bundled for useage if it was add to importmap,
+  // but in real development,
+  // packages should be installed to support type definition.
+  get external(): string[] {
+    let result = []
+
+    if (this.platform === 'node') {
+      result = result.concat(builtins)
+    }
+
+    result = result
+      .concat(Object.keys(this.pkg.dependencies || {}))
+      .concat(Object.keys(this.pkg.peerDependencies || {}))
+
+    if (!this.pkg.devDependencies) return result
+    return result.filter((name) => {
+      return !this.pkg.devDependencies.hasOwnProperty(name)
+    })
+  }
+
+  get babelOptions(): any {
+    return {
+      babelrc: false,
+      presets: [
+        ['@babel/preset-typescript'],
+        ['@babel/preset-react'],
+        [
+          '@babel/preset-env',
+          {
+            loose: true,
+            useBuiltIns: false,
+            targets: {
+              node: 'current',
+              browsers: this.pkg.browserslist
+                ? this.pkg.browserslist[this.env.NODE_ENV]
+                : undefined,
+            },
+          },
+        ],
+      ],
+      plugins: [
+        '@babel/plugin-proposal-optional-chaining',
+        '@babel/plugin-syntax-bigint',
+        '@babel/plugin-proposal-class-properties',
+      ],
+      include: [/.*/],
+      exclude: [/node_modules/, /build/],
+      babelHelpers: 'bundled',
+      extensions: this.extensions,
+    }
+  }
+
+  get plugins(): Plugin[] {
+    const plugins: Plugin[] = []
+    plugins.push(
+      postcss({
+        extract: false,
+        modules: this.env.USE_CSS_MODULES === 'true',
+        use: [],
+      })
+    )
+    plugins.push(image())
+    plugins.push(
+      json({
+        include: ['**'],
+        preferConst: true,
+        indent: '  ',
+        compact: true,
+        namedExports: true,
+      })
+    )
+    if (this.platform === 'browser') {
+      plugins.push(replace(this.replaceMap))
+    }
+
+    plugins.push(
+      resolve({
+        mainFields:
+          this.platform === 'browser'
+            ? ['browser', 'main']
+            : ['module', 'main'],
+        browser: this.platform === 'browser',
+        extensions: this.extensions,
+        preferBuiltins: this.platform !== 'browser',
+      })
+    )
+
+    plugins.push(
+      commonjs({
+        include: [/node_modules/, /build/],
+        ignoreGlobal: false,
+        sourceMap: false,
+      })
+    )
+    plugins.push(babel(this.babelOptions))
+
+    if (this.env.NODE_ENV === 'production') {
+      plugins.push(terser())
+    }
+
+    return plugins
   }
 }
