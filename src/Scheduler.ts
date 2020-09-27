@@ -13,6 +13,7 @@ import { Transformer } from './Transformer'
 import { DtsBundler } from './DtsBundler'
 import { argv } from 'yargs'
 import dotenv from 'dotenv'
+import findUp from 'find-up'
 
 export class Scheduler {
   async ok(): Promise<void> {
@@ -73,9 +74,11 @@ export class Scheduler {
 
     entryFile = path.resolve(workDir, entryFile)
 
-    const pkg = JSON.parse(
-      await fs.readFile(path.resolve(workDir, './package.json'), 'utf8')
-    )
+    const pkgFile = findUp.sync('package.json', { cwd: workDir })
+    if (!pkgFile) {
+      throw new Error('node-ts-scripts: could not find package.json')
+    }
+    const pkg = JSON.parse(await fs.readFile(pkgFile, 'utf8'))
     const env = await this.loadEnv(workDir, command)
 
     const opt = {
