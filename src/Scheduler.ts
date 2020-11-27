@@ -142,6 +142,7 @@ export class Scheduler {
       console.log('Bundle js success')
     } catch (e) {
       console.log('Bundle js failed')
+      console.log('Tips: Did you forget add some packages to your importmap?')
       console.log(this.ctx.debug)
       if (this.ctx.debug) {
         console.error(e)
@@ -168,10 +169,7 @@ export class Scheduler {
       const results = generateDtsBundle([{ filePath: this.ctx.entryFile }], {
         preferredConfigPath: this.ctx.tsconfig,
       })
-      await fs.writeFile(
-        this.ctx.getAbsolutePath('./build/index.d.ts'),
-        results[0]
-      )
+      await fs.writeFile(this.ctx.dtsFile, results[0])
 
       console.log('Bundling dts success')
     } catch (e) {

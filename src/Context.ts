@@ -223,6 +223,14 @@ export class Context {
     return this.getAbsolutePath(outputDir)
   }
 
+  get dtsFile(): string {
+    const argvDtsfile = argv['dts-file']
+    if (typeof argvDtsfile === 'string') {
+      return this.getAbsolutePath(argvDtsfile)
+    }
+    return path.resolve(this.outputDir, './index.d.ts')
+  }
+
   get publicDir(): string {
     const publicDir = (argv['public-dir'] as string) || `./public`
     return this.getAbsolutePath(publicDir)
