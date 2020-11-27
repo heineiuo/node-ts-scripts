@@ -1,5 +1,5 @@
 import * as ts from 'typescript'
-import Options from './Options'
+import { Context } from './Context'
 import glob from 'glob'
 import path from 'path'
 import fs from 'fs'
@@ -26,11 +26,11 @@ const addExtTransformer = <T extends ts.Node>(
 }
 
 export class Transformer {
-  constructor(options: Options) {
+  constructor(options: Context) {
     this.options = options
   }
 
-  options: Options
+  options: Context
 
   async transform(sourceDir: string, targetDir: string): Promise<void> {
     const files = glob.sync(`${sourceDir}/**/*.ts`)

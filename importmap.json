@@ -1,28 +1,5 @@
 {
-  "name": "node-ts-scripts",
-  "version": "0.18.3",
-  "description": "Develop browser app and node app in one cli",
-  "files": [
-    "build/**/*.js",
-    "bin"
-  ],
-  "bin": "bin/node-ts-scripts",
-  "scripts": {
-    "build": "node build bundle src/index.ts --output-dir=build --platform=node --debug --import-map=importmap.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/heineiuo/node-ts-scripts.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/heineiuo/node-ts-scripts/issues"
-  },
-  "homepage": "https://github.com/heineiuo/node-ts-scripts#readme",
-  "dependencies": {
+  "imports": {
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.11.1",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
@@ -71,19 +48,5 @@
     "typescript": "^3.9.7",
     "uuid": "^8.3.1",
     "yargs": "^15.0.2"
-  },
-  "devDependencies": {
-    "@types/browserslist": "^4.8.0",
-    "@types/express": "^4.17.2",
-    "@types/glob": "^7.1.1",
-    "@types/jsdom": "^16.1.0",
-    "@types/koa": "^2.11.2",
-    "@types/koa-cors": "0.0.0",
-    "@types/koa-graphql": "^0.8.3",
-    "@types/koa-mount": "^4.0.0",
-    "@types/node-fetch": "^2.5.5",
-    "@types/uuid": "^7.0.2",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
   }
 }

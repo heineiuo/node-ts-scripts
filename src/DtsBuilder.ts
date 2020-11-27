@@ -1,18 +1,19 @@
 import glob from 'glob'
 import path from 'path'
 import * as ts from 'typescript'
-import Options from './Options'
+import { Context } from './Context'
 
+// WIP
 export class DtsBuilder {
-  constructor(options: Options) {
+  constructor(options: Context) {
     this.options = options
   }
 
-  options: Options
+  options: Context
 
   build = (): void => {
     console.log('Compiling dts files...')
-    const files = glob.sync(`${this.options.dir}/src/**/*`)
+    const files = glob.sync(`${this.options.cwd}/src/**/*`)
     const compilerOptions = {
       target: ts.ScriptTarget.ES5,
       lib: ['dom', 'dom.iterable', 'esnext'],
@@ -30,8 +31,8 @@ export class DtsBuilder {
       emitDeclarationOnly: true,
       declaration: true,
       jsx: ts.JsxEmit.Preserve,
-      outDir: path.resolve(this.options.dir, './build'),
-      declarationDir: path.resolve(this.options.dir, './build'),
+      outDir: path.resolve(this.options.cwd, './build'),
+      declarationDir: path.resolve(this.options.cwd, './build'),
     } as ts.CompilerOptions
 
     const program = ts.createProgram(files, compilerOptions)
