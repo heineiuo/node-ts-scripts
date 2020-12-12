@@ -38,8 +38,8 @@ jobs:
 
       - name: Build
         run: |
-          npx node-ts-scripts bundle src/index.ts --platform=node --outputDir=build
-          node build  bundle src/index.ts --platform=node --outputDir=build
+          npx node-ts-scripts bundle src/index.ts --platform=node --outputDir=build --import-map=importmap.json
+          node build          bundle src/index.ts --platform=node --outputDir=build --import-map=importmap.json
         env:
           CI: true
 
