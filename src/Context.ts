@@ -49,6 +49,7 @@ export class Context {
     const envfiles = [
       `.env.${process.env.NODE_ENV}`,
       `.env.${process.env.NODE_ENV}.local`,
+      argv.envfile as string,
     ]
     for (const envfile of envfiles) {
       try {
