@@ -1,12 +1,14 @@
 {
   "name": "node-ts-scripts",
-  "version": "0.19.1",
+  "version": "0.20.1",
   "description": "Develop browser app and node app in one cli",
   "files": [
     "build/**/*.js",
     "bin"
   ],
-  "bin": "bin/node-ts-scripts",
+  "bin": {
+    "node-ts-scripts": "bin/node-ts-scripts"
+  },
   "scripts": {
     "build": "node build bundle src/index.ts --output-dir=build --platform=node --debug --import-map=importmap.json",
     "test": "echo \"Error: no test specified\" && exit 1"
