@@ -98,7 +98,7 @@ export class Context {
   }
 
   get dts(): boolean {
-    return typeof argv.dts === 'string'
+    return typeof argv.dts === 'string' || argv.dts === true
   }
 
   get html(): boolean {
@@ -127,55 +127,55 @@ export class Context {
   }
 
   get tsconfig(): string {
-    if (this.env.tsconfig) {
-      return this.env.tsconfig
-    }
-    const file = findUp.sync('tsconfig.json')
-    if (file) return file
+    let file = this.env.tsconfig || findUp.sync('tsconfig.json')
 
-    const tmpFolder = path.resolve(os.tmpdir(), this.id)
-    const tmpFile = path.resolve(tmpFolder, 'tsconfig.json')
-
-    try {
-      fs.statSync(tmpFile)
-      return tmpFile
-    } catch (e) {
-      fs.mkdirSync(tmpFolder, { recursive: true })
-      fs.writeFileSync(
-        tmpFile,
-        JSON.stringify({
-          compilerOptions: {
-            module: 'esnext',
-            target: 'esnext',
-            lib: [
-              'es2019',
-              'dom',
-              'esnext.asynciterable',
-              'dom.iterable',
-              'esnext',
-            ],
-            declaration: true,
-            allowJs: false,
-            skipLibCheck: true,
-            jsx: 'react',
-            esModuleInterop: true,
-            allowSyntheticDefaultImports: true,
-            strict: false,
-            forceConsistentCasingInFileNames: true,
-            downlevelIteration: true,
-            resolveJsonModule: true,
-            moduleResolution: 'node',
-            isolatedModules: true,
-            emitDeclarationOnly: true,
-            noEmit: false,
-          },
-          include: ['*'],
-          exclude: ['node_modules'],
-        }),
-        'utf8'
-      )
-      return tmpFile
+    if (!file) {
+      const tmpFolder = path.resolve(os.tmpdir(), 'node-ts-script', this.id)
+      file = path.resolve(tmpFolder, 'tsconfig.json')
+      try {
+        fs.statSync(file)
+      } catch (e) {
+        fs.mkdirSync(tmpFolder, { recursive: true })
+        fs.writeFileSync(
+          file,
+          JSON.stringify({
+            compilerOptions: {
+              module: 'esnext',
+              target: 'esnext',
+              lib: [
+                'es2019',
+                'dom',
+                'esnext.asynciterable',
+                'dom.iterable',
+                'esnext',
+              ],
+              typeRoots: ['./typings'],
+              declaration: true,
+              allowJs: false,
+              skipLibCheck: true,
+              jsx: 'react',
+              esModuleInterop: true,
+              allowSyntheticDefaultImports: true,
+              strict: false,
+              forceConsistentCasingInFileNames: true,
+              downlevelIteration: true,
+              resolveJsonModule: true,
+              moduleResolution: 'node',
+              isolatedModules: true,
+              emitDeclarationOnly: true,
+              noEmit: false,
+            },
+            include: ['*'],
+            exclude: ['node_modules'],
+          }),
+          'utf8'
+        )
+      }
     }
+
+    console.log(`Using tsconfig.json: ${file}`)
+
+    return file
   }
 
   get entryFile(): string {

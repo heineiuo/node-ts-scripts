@@ -10,7 +10,7 @@
     "node-ts-scripts": "bin/node-ts-scripts"
   },
   "scripts": {
-    "build": "node build bundle src/index.ts --output-dir=build --platform=node --debug --import-map=importmap.json",
+    "build": "node build bundle src/index.ts --output-dir=build --platform=node --debug --import-map=importmap.json --dts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

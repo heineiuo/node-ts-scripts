@@ -152,8 +152,8 @@ export class Scheduler {
     try {
       if (this.ctx.dts) {
         await this.dts()
+        console.log('Bundle dts finished')
       }
-      console.log('Bundle dts finished')
     } catch (e) {
       console.log('Bundle dts failed')
       if (this.ctx.debug) {

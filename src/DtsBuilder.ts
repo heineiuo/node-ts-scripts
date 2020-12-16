@@ -17,6 +17,7 @@ export class DtsBuilder {
     const compilerOptions = {
       target: ts.ScriptTarget.ES5,
       lib: ['dom', 'dom.iterable', 'esnext'],
+      typeRoots: ['./typings'],
       allowJs: true,
       skipLibCheck: true,
       esModuleInterop: true,
