@@ -165,10 +165,21 @@ export class Scheduler {
   async dts(): Promise<void> {
     try {
       console.log('Bundling dts files...')
+      console.log(`importedLibraries: ${this.ctx.external.join(',')}`)
 
-      const results = generateDtsBundle([{ filePath: this.ctx.entryFile }], {
-        preferredConfigPath: this.ctx.tsconfig,
-      })
+      const results = generateDtsBundle(
+        [
+          {
+            filePath: this.ctx.entryFile,
+            libraries: {
+              importedLibraries: this.ctx.external,
+            },
+          },
+        ],
+        {
+          preferredConfigPath: this.ctx.tsconfig,
+        }
+      )
       await fs.writeFile(this.ctx.dtsFile, results[0])
 
       console.log('Bundling dts success')
