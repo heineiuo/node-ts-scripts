@@ -309,7 +309,12 @@ export class Context {
       babelrc: false,
       presets: [
         ['@babel/preset-typescript'],
-        ['@babel/preset-react'],
+        [
+          '@babel/preset-react',
+          {
+            runtime: 'automatic',
+          },
+        ],
         [
           '@babel/preset-env',
           {
