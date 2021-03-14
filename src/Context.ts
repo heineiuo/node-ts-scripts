@@ -33,6 +33,7 @@ export class Context {
   private _importmap?: ImportMap
   private _name?: string
   private _version?: string
+  private _nodeModulesDir?: string
 
   loadEnv(): { [x: string]: string } {
     if (!process.env.NODE_ENV) {
@@ -95,6 +96,16 @@ export class Context {
     const pkg = JSON.parse(fs.readFileSync(pkgFile, 'utf-8'))
     this._name = pkg.name
     return this._name
+  }
+
+  get nodeModulesDir(): string {
+    if (!this._nodeModulesDir) {
+      this._nodeModulesDir = findUp.sync('node_modules', {
+        type: 'directory',
+      })
+    }
+
+    return this._nodeModulesDir
   }
 
   get dts(): boolean {

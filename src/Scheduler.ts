@@ -79,6 +79,7 @@ export class Scheduler {
       app.get('/', async (_, res) => {
         res.send(await htmlGenerator.renderToString())
       })
+      app.use('/node_modules', express.static(this.ctx.nodeModulesDir))
       app.use(express.static(this.ctx.outputDir))
       app.use(express.static(this.ctx.publicDir))
 
