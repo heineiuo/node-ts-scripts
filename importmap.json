@@ -2,6 +2,9 @@
   "imports": {
     "@babel/cli": "^7.10.1",
     "@babel/core": "^7.11.1",
+    "@babel/runtime": "^7.11.1",
+    "metro": "^7.11.1",
+    "metro-core": "^7.11.1",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-optional-chaining": "^7.11.0",
     "@babel/plugin-syntax-bigint": "^7.8.3",
