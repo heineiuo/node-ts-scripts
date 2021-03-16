@@ -41,8 +41,13 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^8.0.1",
     "@rollup/plugin-replace": "^2.3.3",
+    "@types/browserslist": "^4.8.0",
+    "@types/express": "^4.17.2",
+    "@types/glob": "^7.1.1",
     "@types/jest": "^26.0.9",
+    "@types/jsdom": "^16.1.0",
     "@types/node": "^14.0.27",
+    "@types/uuid": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^2.11.0",
     "@typescript-eslint/parser": "^2.11.0",
     "babel-eslint": "^10.0.3",
@@ -77,19 +82,5 @@
     "typescript": "^3.9.7",
     "uuid": "^8.3.1",
     "yargs": "^15.0.2"
-  },
-  "devDependencies": {
-    "@types/browserslist": "^4.8.0",
-    "@types/express": "^4.17.2",
-    "@types/glob": "^7.1.1",
-    "@types/jsdom": "^16.1.0",
-    "@types/koa": "^2.11.2",
-    "@types/koa-cors": "0.0.0",
-    "@types/koa-graphql": "^0.8.3",
-    "@types/koa-mount": "^4.0.0",
-    "@types/node-fetch": "^2.5.5",
-    "@types/uuid": "^7.0.2",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0"
   }
 }
