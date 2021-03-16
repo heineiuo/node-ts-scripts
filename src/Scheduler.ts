@@ -3,13 +3,15 @@ import express from 'express'
 import cp from 'child_process'
 import path from 'path'
 import cors from 'cors'
-import { HTMLGenerator } from './HTMLGenerator'
-import { Context } from './Context'
 import { promises as fs } from 'fs'
 import babel from '@babel/core'
 import glob from 'glob'
-import { Transformer } from './Transformer'
+import http from 'http'
+import Metro from 'metro'
 import { generateDtsBundle } from 'dts-bundle-generator'
+import { Transformer } from './Transformer'
+import { HTMLGenerator } from './HTMLGenerator'
+import { Context } from './Context'
 
 export class Scheduler {
   constructor() {
@@ -21,6 +23,11 @@ export class Scheduler {
   runCommand(): Promise<void> {
     if (this.ctx.command === 'run') {
       this.run()
+      return
+    }
+
+    if (this.ctx.command === 'metro') {
+      this.metro()
       return
     }
 
@@ -113,6 +120,18 @@ export class Scheduler {
         }
       })
     }
+  }
+
+  async metro(): Promise<void> {
+    const config = await Metro.loadConfig()
+    const metroBundlerServer = await Metro.runMetro(config)
+
+    const httpServer = http.createServer(
+      metroBundlerServer.processRequest.bind(metroBundlerServer)
+    )
+    const port = this.ctx.env.PORT || 8081
+
+    httpServer.listen(port)
   }
 
   async transform(): Promise<void> {
