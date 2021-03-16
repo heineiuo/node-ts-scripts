@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { argv } from 'yargs'
-import { CommandType, ImportMap, TargetPlatform } from './types'
+import { commands, CommandType, ImportMap, TargetPlatform } from './types'
 import { ModuleFormat } from 'rollup'
 import findUp from 'find-up'
 import path from 'path'
@@ -130,11 +130,7 @@ export class Context {
   }
 
   get command(): CommandType {
-    const command = argv._[0]
-    if (command === 'run' || command === 'bundle') {
-      return command
-    }
-    throw new Error('Unknown command')
+    return argv._[0] as CommandType
   }
 
   get tsconfig(): string {

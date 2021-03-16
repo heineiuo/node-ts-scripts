@@ -40,6 +40,8 @@ export class Scheduler {
       this.transform()
       return
     }
+
+    throw new Error(`Unknown command: ${this.ctx.command}`)
   }
 
   async run(): Promise<void> {
