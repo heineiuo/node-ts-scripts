@@ -127,13 +127,10 @@ export class Scheduler {
   async metro(): Promise<void> {
     const config = await Metro.loadConfig()
     const metroBundlerServer = await Metro.runMetro(config)
-
-    const httpServer = http.createServer(
-      metroBundlerServer.processRequest.bind(metroBundlerServer)
-    )
+    const app = express()
+    app.use(metroBundlerServer.processRequest.bind(metroBundlerServer))
     const port = this.ctx.env.PORT || 8081
-
-    httpServer.listen(port)
+    app.listen(port)
   }
 
   async transform(): Promise<void> {
