@@ -1,5 +1,5 @@
-export type CommandType = 'run' | 'bundle' | 'transform'
-export type TargetPlatform = 'node' | 'browser'
+export type CommandType = 'run' | 'bundle' | 'transform' | 'metro'
+export type TargetPlatform = 'node' | 'browser' | 'react-native'
 
 export type ImportMap = {
   imports: {
