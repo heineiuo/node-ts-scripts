@@ -12,6 +12,7 @@ import replace from '@rollup/plugin-replace'
 import image from '@rollup/plugin-image'
 import commonjs from '@rollup/plugin-commonjs'
 import babel from '@rollup/plugin-babel'
+import graphql from '@rollup/plugin-graphql'
 import { terser } from 'rollup-plugin-terser'
 import postcss from 'rollup-plugin-postcss'
 import browserslist from 'browserslist'
@@ -351,6 +352,7 @@ export class Context {
         use: [],
       })
     )
+    plugins.push(graphql())
     plugins.push(image())
     plugins.push(
       json({
