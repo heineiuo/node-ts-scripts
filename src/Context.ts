@@ -262,7 +262,13 @@ export class Context {
   }
 
   get extensions(): string[] {
-    return ['.ts', '.tsx', '.js', '.jsx', '.mjs']
+    const platform = this.platform
+    const base = ['.ts', '.tsx', '.js', '.jsx', '.mjs']
+    let suffix = platform
+    if (platform === 'node') {
+      suffix = 'server'
+    }
+    return base.concat(base.map((item) => `.${suffix}${item}`))
   }
 
   get replaceMap(): any {
