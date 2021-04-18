@@ -270,7 +270,7 @@ export class Context {
     }
     base = base.concat(base.map((item) => `.${suffix}${item}`))
     const nodeEnv = this.env.NODE_ENV || 'production'
-    base = base.concat(base.map((item) => `${nodeEnv}.${item}`))
+    base = base.concat(base.map((item) => `.${nodeEnv}.${item}`))
     return base
   }
 
